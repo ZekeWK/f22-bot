@@ -1,1 +1,1 @@
-const OAUTH : &str = abcdefghijklmnopqrstuvwxyz;
+pub const OAUTH : &str = abcdefghijklmnopqrstuvwxyz;
