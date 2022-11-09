@@ -10,3 +10,4 @@ futures = "0.3.25"
 tokio = {version = "1.21.2", features = ["full"]}
 async-trait = "0.1.58"
 mattermost_api = "0.3.0"
+async-tungstenite = {version = "0.16.1", features = ["async-tls"]}
