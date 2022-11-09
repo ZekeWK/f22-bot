@@ -1,6 +1,7 @@
 from mattermostdriver import Driver
 
-from secret import TOKEN, TEAM_ID
+from secret import TOKEN
+from configuration import TEAM_ID
 
 def main():
     driver = Driver({
