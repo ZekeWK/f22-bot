@@ -3,7 +3,7 @@ from mattermostdriver import Driver
 from secret import TOKEN
 from configuration import TEAM_ID
 
-def event(data):
+async def event(data):
     print(data)
 
 def main():
