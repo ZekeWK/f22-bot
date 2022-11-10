@@ -12,48 +12,52 @@ def add_channel_member(driver, channel_id, user_id):
     driver.channels.add_user(channel_id, {"user_id": user_id})
 
 def get_channel_members(driver, channel, channel_id, users_in_channels):
-    users_in_channels[channel] = driver.channels.get_channel_members(channel_id)
+    users_in_channels[channel] = [user["user_id"] for user in driver.channels.get_channel_members(channel_id)]
 
-def reactions_update(driver: Driver):
-    reactions = driver.reactions.get_reactions_of_post(post_id = COURSE_REACTIONS_POST_ID)
+class CourseChannels:
+    def __init__(self, driver: Driver):
+        self.driver = driver
 
-    users = {}
+    def reactions_update(self):
+        reactions = self.driver.reactions.get_reactions_of_post(post_id = COURSE_REACTIONS_POST_ID) or []
 
-    for reaction in reactions:
-        if reaction["user_id"] not in users:
-            users[reaction["user_id"]] = set()
+        users = {}
 
-        if reaction["emoji_name"] == "thermometer":
-            users[reaction["user_id"]] |= COURSES["physics"]
-        if reaction["emoji_name"] == "triangular_ruler":
-            users[reaction["user_id"]] |= COURSES["math"]
+        for reaction in reactions:
+            if reaction["user_id"] not in users:
+                users[reaction["user_id"]] = set()
 
-    threads = []
-    users_in_channels = {}
-    for channel in COURSE_CHANNEL_IDS:
-        thread = Thread(target = get_channel_members, args = (driver, channel, COURSE_CHANNEL_IDS[channel], users_in_channels))
-        thread.start()
-        threads.append(thread)
+            if reaction["emoji_name"] == "thermometer":
+                users[reaction["user_id"]] |= COURSES["physics"]
+            if reaction["emoji_name"] == "triangular_ruler":
+                users[reaction["user_id"]] |= COURSES["math"]
 
-    for thread in threads:
-        thread.join()
+        threads = []
+        users_in_channels = {}
+        for channel in COURSE_CHANNEL_IDS:
+            thread = Thread(target = get_channel_members, args = (self.driver, channel, COURSE_CHANNEL_IDS[channel], users_in_channels))
+            thread.start()
+            threads.append(thread)
 
-    for channel in COURSE_CHANNEL_IDS:
-        for user_in_channel in users_in_channels[channel]:
-            if user_in_channel["user_id"] not in users or channel not in users[user_in_channel["user_id"]]:
-                if user_in_channel["user_id"] == driver.client.userid:
-                    continue
-                print(f"Removing '{user_in_channel['user_id']}' from '{channel}'")
-                Thread(target = remove_channel_member, args = (driver, COURSE_CHANNEL_IDS[channel], user_in_channel["user_id"])).start()
-            else:
-                users[user_in_channel["user_id"]] -= { channel }
+        for thread in threads:
+            thread.join()
 
-    for user in users:
-        if not users[user]:
-            continue
-        print(f"Adding '{user}' to '{users[user]}'")
-        for channel in users[user]:
-            Thread(target = add_channel_member, args = (driver, COURSE_CHANNEL_IDS[channel], user)).start()
+        for channel in COURSE_CHANNEL_IDS:
+            for user_in_channel in users_in_channels[channel]:
+                if user_in_channel not in users or channel not in users[user_in_channel]:
+                    if user_in_channel == self.driver.client.userid:
+                        continue
+                    print(f"Removing '{user_in_channel}' from '{channel}'")
+                    Thread(target = remove_channel_member, args = (self.driver, COURSE_CHANNEL_IDS[channel], user_in_channel)).start()
+                else:
+                    users[user_in_channel] -= { channel }
+
+        for user in users:
+            if not users[user]:
+                continue
+            print(f"Adding '{user}' to '{users[user]}'")
+            for channel in users[user]:
+                Thread(target = add_channel_member, args = (self.driver, COURSE_CHANNEL_IDS[channel], user)).start()
 
 async def event(data):
     print(data)
@@ -75,7 +79,8 @@ def main():
 
 #    print(driver.teams.get_team(team_id=TEAM_ID))
 
-    reactions_update(driver)
+    cc = CourseChannels(driver)
+    cc.reactions_update()
 
 #    driver.init_websocket(event)
 
