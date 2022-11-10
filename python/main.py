@@ -11,6 +11,9 @@ def remove_channel_member(driver, channel_id, user_id):
 def add_channel_member(driver, channel_id, user_id):
     driver.channels.add_user(channel_id, {"user_id": user_id})
 
+def get_channel_members(driver, channel, channel_id, users_in_channels):
+    users_in_channels[channel] = driver.channels.get_channel_members(channel_id)
+
 def reactions_update(driver: Driver):
     reactions = driver.reactions.get_reactions_of_post(post_id = COURSE_REACTIONS_POST_ID)
 
@@ -28,7 +31,12 @@ def reactions_update(driver: Driver):
     threads = []
     users_in_channels = {}
     for channel in COURSE_CHANNEL_IDS:
-        thread = users_in_channels[channel] = driver.channels.get_channel_members(COURSE_CHANNEL_IDS[channel])
+        thread = Thread(target = get_channel_members, args = (driver, channel, COURSE_CHANNEL_IDS[channel], users_in_channels))
+        thread.start()
+        threads.append(thread)
+
+    for thread in threads:
+        thread.join()
 
     for channel in COURSE_CHANNEL_IDS:
         for user_in_channel in users_in_channels[channel]:
