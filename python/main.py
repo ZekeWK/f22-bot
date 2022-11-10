@@ -17,6 +17,13 @@ def add_channel_member(driver, channel, user_id, users_in_channels):
 def get_channel_members(driver, channel, channel_id, users_in_channels):
     users_in_channels[channel] = { user["user_id"] for user in driver.channels.get_channel_members(channel_id) }
 
+def manage_channel_categories(user_id):
+    # make sure this happens AFTER the user has been added to the relevant categories
+    # get user channel categories
+    # move the kurser ones
+    # send request
+    pass
+
 class CourseChannels:
     def __init__(self, driver: Driver):
         self.driver = driver
@@ -118,6 +125,9 @@ def main():
         })
 
     driver.login()
+
+    driver.channels
+
 
 #    print(driver.teams.get_team(team_id=TEAM_ID))
 
