@@ -131,7 +131,7 @@ class CourseChannels:
             thread.join()
 
         for user in self.users:
-            manage_channel_categories(self.driver, user, TEAM_ID, self.users_in_channels)
+            Thread(target = manage_channel_categories, args = (self.driver, user, TEAM_ID, self.users_in_channels))
 
     def reaction_added(self, data):
         reaction = json.loads(data["reaction"])
