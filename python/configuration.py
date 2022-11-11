@@ -25,8 +25,3 @@ COURSES = {
             "si1121_termo"
             }
         }
-
-
-
-
-
