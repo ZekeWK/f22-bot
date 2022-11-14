@@ -19,7 +19,7 @@ def mm_channels_get_user_sidebar_categories(driver: Driver, user_id, team_id):
     )
 
 def mm_channels_update_user_sidebar_categories(driver: Driver, user_id, team_id, options=None):
-    return driver.client.get(
+    return driver.client.put(
         '/users/' + user_id + '/teams/' + team_id + '/channels/categories',
         options=options
     )
@@ -44,24 +44,48 @@ def manage_channel_categories(driver: Driver, user_id, team_id, users_in_channel
     # make sure this happens AFTER the user has been added to the relevant categories
     categories = mm_channels_get_user_sidebar_categories(driver, user_id, team_id)["categories"]
 
-    channel_ids = [COURSE_CHANNEL_IDS[channel] for channel in COURSE_CHANNEL_IDS]
+    channel_ids = [COURSE_CHANNEL_IDS[channel] for channel in users_in_channels if user_id in users_in_channels[channel]]
 
     course_category_name = "Kurser"
 
     for category in categories:
         if category["display_name"] == course_category_name:
-            mm_channels_delete_user_sidebar_category(driver, user_id, team_id, category["id"])
-
-    if any(user_id in users_in_channels[channel] for channel in users_in_channels):
+            break
+    else:
         mm_channels_create_user_sidebar_category(driver, user_id, team_id, 
                                                  { 
                                                   "user_id": user_id, 
                                                   "team_id": team_id, 
                                                   "display_name": course_category_name, 
-                                                  "type": "custom", 
-                                                  "channel_ids": channel_ids
+                                                  "type": "custom"
                                                   }
                                                  )
+        categories = mm_channels_get_user_sidebar_categories(driver, user_id, team_id)["categories"]
+
+    new_categories = []
+    for category in categories:
+        if category["display_name"] == course_category_name:
+            if not all(channel_id in category["channel_ids"] for channel_id in channel_ids):
+                new_categories.append({
+                    "id": category["id"],
+                    "display_name": category["display_name"],
+                    "user_id": user_id,
+                    "team_id": team_id,
+                    "channel_ids": list(set(channel_ids) | set(category["channel_ids"]))
+                    })
+        else:
+            if any(channel_id in category["channel_ids"] for channel_id in channel_ids):
+                new_categories.append({
+                    "id": category["id"],
+                    "display_name": category["display_name"],
+                    "user_id": user_id,
+                    "team_id": team_id,
+                    "channel_ids": [channel_id for channel_id in category["channel_ids"] if channel_id not in channel_ids]
+                    })
+
+    if new_categories:
+        print("wha")
+        mm_channels_update_user_sidebar_categories(driver, user_id, team_id, new_categories)
 
 class CourseChannels:
     def __init__(self, driver: Driver):
@@ -131,7 +155,7 @@ class CourseChannels:
             thread.join()
 
         for user in self.users:
-            Thread(target = manage_channel_categories, args = (self.driver, user, TEAM_ID, self.users_in_channels))
+            Thread(target = manage_channel_categories, args = (self.driver, user, TEAM_ID, self.users_in_channels)).start()
 
     def reaction_added(self, data):
         reaction = json.loads(data["reaction"])
