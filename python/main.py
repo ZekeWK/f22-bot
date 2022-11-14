@@ -84,7 +84,6 @@ def manage_channel_categories(driver: Driver, user_id, team_id, users_in_channel
                     })
 
     if new_categories:
-        print("wha")
         mm_channels_update_user_sidebar_categories(driver, user_id, team_id, new_categories)
 
 class CourseChannels:
