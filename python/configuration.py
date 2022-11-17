@@ -25,3 +25,7 @@ COURSES = {
             "si1121_termo"
             }
         }
+
+DEFAULT_CHANNELS = {
+        "kurser": "3m7k48qih3rmdyghqi3f761z3w"
+        }

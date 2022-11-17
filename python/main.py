@@ -177,6 +177,10 @@ class CourseChannels:
         self.build_users()
         self.fix_diff()
 
+def add_to_default_channels(driver: Driver, data):
+    for channel in DEFAULT_CHANNELS:
+        Thread(target = driver.channels.add_user, args = (DEFAULT_CHANNELS[channel], {"user_id": data["user_id"]})).start()
+
 def main():
     driver = Driver(
             {
@@ -199,6 +203,10 @@ def main():
 
     ws.subscribe("reaction_added", cc.reaction_added)
     ws.subscribe("reaction_removed", cc.reaction_removed)
+
+    ws.subscribe("user_added", lambda data: add_to_default_channels(driver, data))
+
+    # User addad to team -> Add to channel {'event': 'user_added', 'data': {'team_id': 'g16tqepa3ffntkfnnwqyapkzkr', 'user_id': 'zu7i4ow3obfa3egwpau59r6s4a'}, 'broadcast': {'omit_users': None, 'user_id': '', 'channel_id': '8e9yhhagtjbnpdyr6eiox8i3oa', 'team_id': '', 'connection_id': ''}, 'seq': 8}
 
 if __name__ == "__main__":
     main()
