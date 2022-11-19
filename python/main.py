@@ -178,8 +178,24 @@ class CourseChannels:
         self.fix_diff()
 
 def add_to_default_channels(driver: Driver, data):
+    threads = []
     for channel in DEFAULT_CHANNELS:
-        Thread(target = driver.channels.add_user, args = (DEFAULT_CHANNELS[channel], {"user_id": data["user_id"]})).start()
+        thread = Thread(target = driver.channels.add_user, args = (DEFAULT_CHANNELS[channel], {"user_id": data["user_id"]}))
+        thread.start()
+        threads.append(thread)
+
+    for thread in threads:
+        thread.join()
+
+    delete_new_posts_in_clean_channels(driver)
+
+def delete_new_posts_in_clean_channels(driver: Driver):
+    for channel in CLEAN_ADDED_TO_MESSAGES_CHANNELS:
+        res = driver.posts.get_posts_for_channel(channel_id = CLEAN_ADDED_TO_MESSAGES_CHANNELS[channel])
+        for post in res["posts"]:
+            if res["posts"][post]["type"] == "system_add_to_channel":
+                print("Deleting {post}")
+                driver.posts.delete_post(post_id = post)
 
 def main():
     driver = Driver(
@@ -205,6 +221,8 @@ def main():
     ws.subscribe("reaction_removed", cc.reaction_removed)
 
     ws.subscribe("user_added", lambda data: add_to_default_channels(driver, data))
+
+    delete_new_posts_in_clean_channels(driver)
 
     # User addad to team -> Add to channel {'event': 'user_added', 'data': {'team_id': 'g16tqepa3ffntkfnnwqyapkzkr', 'user_id': 'zu7i4ow3obfa3egwpau59r6s4a'}, 'broadcast': {'omit_users': None, 'user_id': '', 'channel_id': '8e9yhhagtjbnpdyr6eiox8i3oa', 'team_id': '', 'connection_id': ''}, 'seq': 8}
 

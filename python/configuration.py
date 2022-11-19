@@ -29,3 +29,7 @@ COURSES = {
 DEFAULT_CHANNELS = {
         "kurser": "3m7k48qih3rmdyghqi3f761z3w"
         }
+
+CLEAN_ADDED_TO_MESSAGES_CHANNELS = {
+        "kurser": "3m7k48qih3rmdyghqi3f761z3w"
+        }
