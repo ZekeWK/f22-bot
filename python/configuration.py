@@ -1,4 +1,4 @@
-TEAM_ID = "g16tqepa3ffntkfnnwqyapkzkr"
+TEAM_ID = "yw6pexns4p8yzbhoohthh9z45c"
 COURSE_REACTIONS_POST_ID = "ozke5upm1ibhdxe5ptxkbjq9ba"
 
 COURSE_CHANNEL_IDS = {
