@@ -27,9 +27,9 @@ COURSES = {
         }
 
 DEFAULT_CHANNELS = {
-        "kurser": "itnb1umirjd8dkyx7da11i5dhy"
+        "kurser": "nudncyky9ibujrs7ayp153mqqc"
         }
 
 CLEAN_ADDED_TO_MESSAGES_CHANNELS = {
-        "kurser": "itnb1umirjd8dkyx7da11i5dhy"
+        "kurser": "nudncyky9ibujrs7ayp153mqqc"
         }
