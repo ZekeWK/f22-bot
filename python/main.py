@@ -178,16 +178,17 @@ class CourseChannels:
         self.fix_diff()
 
 def add_to_default_channels(driver: Driver, data):
-    threads = []
-    for channel in DEFAULT_CHANNELS:
-        thread = Thread(target = driver.channels.add_user, args = (DEFAULT_CHANNELS[channel], {"user_id": data["user_id"]}))
-        thread.start()
-        threads.append(thread)
+    if data["team_id"] == TEAM_ID:
+        threads = []
+        for channel in DEFAULT_CHANNELS:
+            thread = Thread(target = driver.channels.add_user, args = (DEFAULT_CHANNELS[channel], {"user_id": data["user_id"]}))
+            thread.start()
+            threads.append(thread)
 
-    for thread in threads:
-        thread.join()
+        for thread in threads:
+            thread.join()
 
-    delete_new_posts_in_clean_channels(driver)
+        delete_new_posts_in_clean_channels(driver)
 
 def delete_new_posts_in_clean_channels(driver: Driver):
     for channel in CLEAN_ADDED_TO_MESSAGES_CHANNELS:
