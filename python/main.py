@@ -159,7 +159,7 @@ class CourseChannels:
     def reaction_added(self, data):
         reaction = json.loads(data["reaction"])
 
-        if reaction["post_id"] == COURSE_REACTIONS_POST_ID:
+        if reaction["post_id"] != COURSE_REACTIONS_POST_ID:
             return
 
         if reaction["user_id"] not in self.reactions:
@@ -173,7 +173,7 @@ class CourseChannels:
     def reaction_removed(self, data):
         reaction = json.loads(data["reaction"])
 
-        if reaction["post_id"] == COURSE_REACTIONS_POST_ID:
+        if reaction["post_id"] != COURSE_REACTIONS_POST_ID:
             return
 
         if reaction["user_id"] not in self.reactions:
