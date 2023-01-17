@@ -18,20 +18,22 @@ COURSE_CHANNEL_IDS = {
 
 COURSES = {
         "math": {
-            "sf1672_linalg", 
-            "sf1918_sanstat", 
-            "sa1006_ingen",
             "sf1674_flervarre",
             "sf1550_numme",
             "dd1320_tillämpad_datalogi"
             },
         "physics": {
-            "sf1672_linalg", 
             "sk1104_klasfys", 
-            "dd1331_gruprog", 
-            "si1121_termo",
             "sf1674_flervarre",
             "sg1112_mekaniki"
+            },
+        "archive": {
+            "sf1672_linalg",
+            "sf1918_sanstat",
+            "sa1006_ingen",
+            "dd1331_gruprog",
+            "si1121_termo",
+            "sf1673_envarre"
             }
         }
 

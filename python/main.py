@@ -126,6 +126,8 @@ class CourseChannels:
                     self.users[user] |= COURSES["physics"]
                 if emoji_name == "triangular_ruler":
                     self.users[user] |= COURSES["math"]
+                if emoji_name == "package":
+                    self.users[user] |= COURSES["archive"]
 
     def fix_diff(self):
         threads = []
