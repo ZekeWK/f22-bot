@@ -38,7 +38,7 @@ COURSES = {
             "sa1006_ingen",
             "dd1331_gruprog",
             "si1121_termo",
-            "sf1673_envarre"
+            "sf1673_envarre",
             "sf1674_flervarre",
             "sk1104_klasfys", 
             }
