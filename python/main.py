@@ -132,7 +132,7 @@ class CourseChannels:
     def fix_diff(self):
         threads = []
         for channel in COURSE_CHANNEL_IDS:
-            for user_in_channel in self.users_in_channels[channel]:
+            for user_in_channel in [*self.users_in_channels[channel]]:
                 if user_in_channel not in self.users or channel not in self.users[user_in_channel]:
                     if user_in_channel == self.driver.client.userid:
                         continue
